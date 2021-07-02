@@ -7,44 +7,56 @@ const jwt = require('../auth/jwt')
 const User = db.user;
 
 const signin = (req, res) => {
-    let payload = req.body;
+    let { username, password } = req.body;
 
-    const user = User.findOne({username: payload.username});
-    if(user) {
-        const validPassword = bcrypt.compare(payload.password, user.password);
+    if(!username || !password) {
+        response.error(req, res, "Username and Password should be provided");
+        return;
+    }
 
-        if(validPassword) {
-            const token = jwt.generate({ username: user.username});
-            response.success(req, res, token, 200);
+    User.findOne({username: username})
+    .then(data => {
+        if(data) {
+            const validPassword = bcrypt.compareSync(password, data.password);
+            
+            if(validPassword) {
+                const token = jwt.generate({ username: data.username});
+                console.log(token);
+                response.success(req, res, token, 200);
+            }
+            else {
+                response.error(req, res, "Username or Password provided are invalid", 401);
+            }
         }
         else {
             response.error(req, res, "Username or Password provided are invalid", 401);
         }
-    }
-    else {
-        response.error(req, res, "Username or Password provided are invalid", 401);
-    }
+    }).
+    catch(err => {
+        let message = err.message || "Some error occurred."
+        response.error(req, res, message, 500);
+    });
 }
 
 const create = async(req, res) => {
-    let payload = req.body;
+    let { username, password, email } = req.body;
     const saltRounds = 10;
 
-    if(!payload.username || !payload.password || !payload.email) {
+    if(!username || !password || !email) {
         response.error(req, res, "Username, Email and Password cannot be empty!", 400);
         return;
     }
 
-    if(!validator.isEmail(payload.email)) {
+    if(!validator.isEmail(email)) {
         response.error(req, res, "email should have a correct format like to foo@domain.com");
         return;
     }
 
-    let foundByUsername = await findBy({ username: payload.username });
+    let foundByUsername = await findBy({ username: username });
     let foundByEmail = [];
 
     if(foundByUsername.length == 0) {
-        foundByEmail = await findBy({ email: payload.email });
+        foundByEmail = await findBy({ email: email });
         console.log(foundByEmail);
     }
 

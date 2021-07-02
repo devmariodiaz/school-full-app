@@ -1,3 +1,5 @@
+const validator = require('validator');
+
 module.exports = mongoose => {
     return mongoose.model("user",
             mongoose.Schema({
@@ -7,7 +9,9 @@ module.exports = mongoose => {
                 },
                 email: { 
                     type: String, 
-                    required: true
+                    required: true,
+                    lowercase: true,
+                    validate: (value) => validator.isEmail(value)
                 },
                 password: { 
                     type: String, 

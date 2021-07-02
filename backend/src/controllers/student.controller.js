@@ -12,10 +12,11 @@ const create = async(req, res) => {
     }
 
     const student = new Student({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        birthdate: req.body.birthdate,
-        identificationNumber: req.body.identificationNumber
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        birthdate: payload.birthdate,
+        identificationNumber: payload.identificationNumber,
+        identificationType: payload.identificationType
     });
 
     student
@@ -40,6 +41,7 @@ const deleteOne = async(req, res) => {
 const findAll = async(req, res) => {
     Student
         .find({})
+        .populate('identificationType')
         .then(data => {
             response.success(req, res, data, 200);
         })
@@ -50,7 +52,7 @@ const findAll = async(req, res) => {
 }
 
 const findOne = async(req, res) => {
-
+    let params = req.params;
 }
 
 

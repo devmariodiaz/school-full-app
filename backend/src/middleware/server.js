@@ -1,11 +1,13 @@
 const express = require('express');
 const app = express();
 const db = require('../models/index.model');
+const helmet = require('helmet');
 
 const start = (port) => {
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use(express.static("public"));
+    app.use(helmet());
 
     console.clear();
 
