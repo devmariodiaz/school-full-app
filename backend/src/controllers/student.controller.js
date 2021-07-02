@@ -1,0 +1,63 @@
+const db = require('../models/index.model');
+const response = require('../utils/response');
+
+const Student = db.student;
+
+const create = async(req, res) => {
+    let payload = req.body;
+
+    if(!payload.firstName || !payload.lastName) {
+        response.error(req, res, "Content cannot be empty!", 400);
+        return;
+    }
+
+    const student = new Student({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        birthdate: req.body.birthdate,
+        identificationNumber: req.body.identificationNumber
+    });
+
+    student
+        .save(student)
+        .then(data => {
+            response.success(req, res, data, 200);            
+        })
+        .catch(err => {
+            let message = err.message || "Some error occurred while creating the Student."
+            response.error(req, res, message, 500);
+        });
+}
+
+const update = async(req, res) => {
+
+}
+
+const deleteOne = async(req, res) => {
+
+}
+
+const findAll = async(req, res) => {
+    Student
+        .find({})
+        .then(data => {
+            response.success(req, res, data, 200);
+        })
+        .catch(err => {
+            let message = err.message || "Some error occurred while creating the Student."
+            response.error(req, res, message, 500);
+        });
+}
+
+const findOne = async(req, res) => {
+
+}
+
+
+module.exports = {
+    create,
+    update,
+    findAll,
+    findOne,
+    deleteOne
+}
